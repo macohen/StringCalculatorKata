@@ -29,4 +29,15 @@ public class TestStringCalculator {
     public void testAddTwoNumbers() {
         assertEquals(2, c.add("1,1"));
     }
+
+    @Test
+    public void testAddUnknownNumbers() {
+        assertEquals(10, c.add("1,1,1,1,1,1,1,1,1,1"));
+    }
+
+    @Test
+    public void testAddNewlineAndCommaDelim() {
+        assertEquals(6,c.add("1\n2,3"));
+    }
+
 }
