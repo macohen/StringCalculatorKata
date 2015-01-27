@@ -1,20 +1,17 @@
-/**
- * Created by cohenma on 1/26/15.
- */
-
-import org.junit.*;
+import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
 
+/**
+ * Created by cohenma on 1/27/15.
+ */
 public class TestStringCalculator {
     private Calculator c;
-
     @Before
     public void setUp() {
         c = new Calculator();
     }
-
     @Test
     public void testAddEmptyString() {
         assertEquals(0, c.add(""));
@@ -27,17 +24,23 @@ public class TestStringCalculator {
 
     @Test
     public void testAddTwoNumbers() {
-        assertEquals(2, c.add("1,1"));
+        assertEquals(3, c.add("1,2"));
     }
 
     @Test
     public void testAddUnknownNumbers() {
-        assertEquals(10, c.add("1,1,1,1,1,1,1,1,1,1"));
+        String numberStr = "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1";
+        assertEquals(21, c.add(numberStr));
     }
 
     @Test
-    public void testAddNewlineAndCommaDelim() {
-        assertEquals(6,c.add("1\n2,3"));
+    public void testNewlineComma() {
+        assertEquals(6, c.add("1\n2,3"));
+    }
+
+    @Test
+    public void testUserProvidedDefault() {
+        assertEquals(3, c.add("//;\n1;1;1"));
     }
 
 }
