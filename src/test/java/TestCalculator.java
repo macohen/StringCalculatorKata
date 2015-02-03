@@ -1,4 +1,5 @@
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.regex.Matcher;
@@ -8,85 +9,93 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * Created by cohenma on 1/30/15.
+ * Created by cohenma on 2/2/15.
  */
 public class TestCalculator {
-    Calculator c;
+    private Calculator c;
+
+
     @Before
     public void setUp() {
         c = new Calculator();
     }
-
     @Test
-    public void testAdd() {
+    public void emptyStringShouldReturnZero() {
         assertEquals(0, c.add(""));
     }
 
     @Test
-    public void testAddOneNumber() {
+    public void oneNumberShouldReturnThatNumber() {
         assertEquals(1, c.add("1"));
     }
 
     @Test
-    public void testAddTwoNumbers() {
+    public void twoNumbersShouldReturnTheirSum() {
         assertEquals(3, c.add("1,2"));
     }
 
     @Test
-    public void testAddManyNumbers() {
-        assertEquals(100, c.add("10,10,10,10,10,10,10,10,10,10"));
+    public void manyNumbersShouldReturnTheirSum() {
+        assertEquals(18, c.add("1,2,1,2,1,2,1,2,1,2,1,2"));
     }
 
     @Test
-    public void testNewlineCommaDelims() {
+    public void newLinesOrCommasShouldWorkAsDelimiters() {
         assertEquals(6, c.add("1,2\n3"));
     }
-
+    private final String regex = "//\\[*([^\\]])\\]*\n(.*)";
+    //"//(.)\n(.*)";
     @Test
-    public void testCustomDelimiter() {
-        assertEquals(3, c.add("//;\n1;2"));
-    }
-
-    @Test
-    public void testCustomDelimRegex() {
-        //not really testing the Calculator.  just figuring out the regex here
-        String expectedDelim = ";";
-        //String expectedNums = "1;2";
-        String numStr = "//;\n1;2";
-
-        String regex = "//(.)\n(.*)";
-        Matcher m = Pattern.compile(regex).matcher(numStr);
+    public void testCustomDelimiterRegex() {
+        Matcher m = Pattern.compile(regex).matcher("//;\n1;2");
         if(m.matches()) {
             assertEquals(";", m.group(1));
             assertEquals("1;2", m.group(2));
         } else {
-            fail("no match");
+            fail("regex does not match");
         }
     }
 
-    private String negativeNumberMessage = "Negative numbers not supported: ";
+    @Ignore
     @Test
-    public void testNegativeNumbers() {
+    public void testCustomDelimiterWithMultipleCharsRegex() {
+        Matcher m = Pattern.compile(regex).matcher("//[--]\n1--2");
+        if(m.matches()) {
+            assertEquals("--", m.group(1));
+            assertEquals("1--2", m.group(2));
+        } else {
+            fail("regex does not match");
+        }
+    }
+
+    @Test
+    public void customDelimitersShouldReturnASumOfAllDelimitedNumbers() {
+        assertEquals(6, c.add("//;\n1;2;3"));
+    }
+
+    @Test
+    public void negativeNumbersShouldThrowException() {
         try {
             c.add("-1,2");
-            fail("No exception caught for negative numbers");
+            fail("Did not throw IllegalArgumentException for negative number");
         } catch(IllegalArgumentException e) {
-            assertEquals(negativeNumberMessage + "-1,", e.getMessage());
+            assertEquals("negatives not allowed -1", e.getMessage());
         }
     }
 
     @Test
-    public void testMultipleNegativeNumbers() {
-        try {
-            c.add("-1,-2");
-            fail("No exception caught for negative numbers");
-        } catch(IllegalArgumentException e) {
-            assertEquals(negativeNumberMessage + "-1,-2,", e.getMessage());
-        }
+    public void numbersBiggerThan1000ShouldBeIgnored() {
+        assertEquals(2, c.add("1001,2"));
     }
 
+    @Ignore
     @Test
-    public void testIgnoreGreaterThan1000() {
-        assertEquals(2, c.add("2,1001"));
+    public void customDelimitersCanBeAnyLength() {
+        assertEquals(2, c.add("//[--]\n1--1"));
     }
+
+
+
+
+
 }
